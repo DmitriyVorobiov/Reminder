@@ -16,26 +16,19 @@ public class BootBroadcastReciever extends BroadcastReceiver {
 		SharedPreferences myPreferences = context.getSharedPreferences(MainActivity.PREFERENCES_NAME, 0);
 
 		Calendar calendar = Calendar.getInstance();
-		int day = myPreferences.getInt(MainActivity.DAY, calendar.get(Calendar.DAY_OF_MONTH));
-		int month = myPreferences.getInt(MainActivity.MONTH, calendar.get(Calendar.MONTH));
-		int year = myPreferences.getInt(MainActivity.YEAR, calendar.get(Calendar.YEAR));
-		int hour = myPreferences.getInt(MainActivity.HOUR, calendar.get(Calendar.HOUR_OF_DAY));
-		int minutes = myPreferences.getInt(MainActivity.MINUTE, calendar.get(Calendar.MINUTE));
 
-		calendar.set(Calendar.DAY_OF_MONTH, day);
-		calendar.set(Calendar.MONTH, month);
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.HOUR_OF_DAY, hour);
-		calendar.set(Calendar.MINUTE, minutes);
+		calendar.set(Calendar.DAY_OF_MONTH, myPreferences.getInt(MainActivity.DAY, calendar.get(Calendar.DAY_OF_MONTH)));
+		calendar.set(Calendar.MONTH, myPreferences.getInt(MainActivity.MONTH, calendar.get(Calendar.MONTH)));
+		calendar.set(Calendar.YEAR, myPreferences.getInt(MainActivity.YEAR, calendar.get(Calendar.YEAR)));
+		calendar.set(Calendar.HOUR_OF_DAY, myPreferences.getInt(MainActivity.HOUR, calendar.get(Calendar.HOUR_OF_DAY)));
+		calendar.set(Calendar.MINUTE, myPreferences.getInt(MainActivity.MINUTE, calendar.get(Calendar.MINUTE)));
 		
 		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-		Intent goalIntent = new Intent(context, AlarmBroadcastReciever.class);
-		PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, goalIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		Intent targetIntent = new Intent(context, AlarmBroadcastReciever.class);
+		PendingIntent pendigIntent = PendingIntent.getBroadcast(context, 0, targetIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
-
-		am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+		am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendigIntent);
 	}
 
 }
