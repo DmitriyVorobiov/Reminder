@@ -9,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 
 public class AlarmBroadcastReciever extends BroadcastReceiver {
 
+	private static final int NOTIFICATION_ID = 1212;
 	NotificationManager notificationManager;
 
 	@Override
@@ -25,7 +26,7 @@ public class AlarmBroadcastReciever extends BroadcastReceiver {
 				.setAutoCancel(true).setSmallIcon(R.drawable.ic_launcher)
 				.setTicker(context.getSharedPreferences(MainActivity.PREFERENCES_NAME, 0).getString(MainActivity.TITLE, ""));
 
-		notificationManager.notify(43, builder.build());
+		notificationManager.notify(NOTIFICATION_ID, builder.build());
 
 		context.startActivity(reminderActivityIntent);
 	}

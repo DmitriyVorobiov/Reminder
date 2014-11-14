@@ -2,6 +2,10 @@ package com.example.reminder;
 
 import java.util.Calendar;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -14,8 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-public class MainActivity extends ActionBarActivity implements TimePickerDialogFragment.OnCompleteListener, DatePickerDialogFragment.OnCompleteListener,
-		OnClickListener {
+public class MainActivity extends ActionBarActivity implements TimePickerDialogFragment.OnCompleteListener,
+		DatePickerDialogFragment.OnCompleteListener, OnClickListener {
 
 	protected static final String YEAR = "year";
 	protected static final String MONTH = "month";
@@ -43,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements TimePickerDialogF
 	private String title;
 
 	// TODO validation, saveState, toast
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,21 +80,16 @@ public class MainActivity extends ActionBarActivity implements TimePickerDialogF
 
 	}
 
-	private void saveData() {	
+	private void saveData() {
 		title = editTitle.getText().toString();
 		description = editDescription.getText().toString();
-		myPreferences = getPreferences(MODE_PRIVATE);		
-		Editor saveEditor = myPreferences.edit();		
-		saveEditor.putInt(YEAR, year)
-		.putInt(MONTH, month)
-		.putInt(DAY, day)
-		.putInt(HOUR, hour)
-		.putInt(MINUTE, minute)
-		.putString(TITLE, title)
-		.putString(DESCRIPTION, description);
+		myPreferences = getPreferences(MODE_PRIVATE);
+		Editor saveEditor = myPreferences.edit();
+		saveEditor.putInt(YEAR, year).putInt(MONTH, month).putInt(DAY, day).putInt(HOUR, hour).putInt(MINUTE, minute).putString(TITLE, title)
+				.putString(DESCRIPTION, description);
 		saveEditor.commit();
 		Log.d("MainActivity", myPreferences.getString(TITLE, "dfdf"));
-		
+
 	}
 
 	private void initViewComponents() {
@@ -169,10 +168,30 @@ public class MainActivity extends ActionBarActivity implements TimePickerDialogF
 			return;
 		}
 		case (R.id.btnSave): {
+			Intent intent = new Intent(this, AlarmBroadcastReciever.class);
+			PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+
+			Calendar calendar = getCalendar();
+
+			if (!isValid()) {
+				// toast
+				return;
+			}
+
+			am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pIntent);
+
 			saveData();
+
+			// toast
 			return;
 		}
 		}
+	}
+
+	private boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private void showInputDialog(String type) {
@@ -201,5 +220,9 @@ public class MainActivity extends ActionBarActivity implements TimePickerDialogF
 		minute = c.get(Calendar.MINUTE);
 	}
 
-
+	@Override
+	protected void onPause() {
+		saveData();
+		super.onPause();
+	}
 }
